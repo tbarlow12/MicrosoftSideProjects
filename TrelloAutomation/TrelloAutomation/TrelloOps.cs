@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Manatee.Trello.Rest;
 using Manatee.Trello.ManateeJson;
 using Manatee.Trello.WebApi;
+using System.Xml;
 
 namespace TrelloAutomation
 {
@@ -24,11 +25,15 @@ namespace TrelloAutomation
                 card.List = list;
             }
             if (position == null)
+            {
                 position = list.Cards.Count();
+                if (position == 0)
+                    position = 1;
+            }
             card.Position = position;
         }
 
-        public static List ListByName(this ListCollection lists, string name)
+        public static List ByName(this ListCollection lists, string name)
         {
             foreach(List list in lists)
             {
@@ -38,6 +43,35 @@ namespace TrelloAutomation
                 }
             }
             return null;
+        }
+
+        public static Label ByName(this BoardLabelCollection labels, string name)
+        {
+            foreach(Label label in labels)
+            {
+                if (label.Name.Equals(name))
+                {
+                    return label;
+                }
+            }
+            return null;
+        }
+
+        public static Label ByName(this CardLabelCollection labels, string name)
+        {
+            foreach (Label label in labels)
+            {
+                if (label.Name.Equals(name))
+                {
+                    return label;
+                }
+            }
+            return null;
+        }
+
+        public static bool HasLabel(this Card card, string name)
+        {
+            return card.Labels.ByName(name) != null;
         }
 
         public static void MoveAllCards(this List sourceList, List destList)
@@ -50,6 +84,8 @@ namespace TrelloAutomation
         }
 
 
+
+
         public static void Initialize()
         {
             var serializer = new ManateeSerializer();
@@ -57,8 +93,10 @@ namespace TrelloAutomation
             TrelloConfiguration.Deserializer = serializer;
             TrelloConfiguration.JsonFactory = new ManateeFactory();
             TrelloConfiguration.RestClientProvider = new WebApiClientProvider();
-            TrelloAuthorization.Default.AppKey = "fff37eb4d5dc0d32cb123cc06f88b032";
-            TrelloAuthorization.Default.UserToken = "52373a93deb25e10e724265ef787ce9e46c06fee40e3bef6fd31f4c94f8f6367";
+            XmlDocument doc = new XmlDocument();
+            doc.Load(@"../../secrets.xml");
+            TrelloAuthorization.Default.AppKey = doc.LastChild.FirstChild.InnerText;
+            TrelloAuthorization.Default.UserToken = doc.LastChild.LastChild.InnerText;
         }
 
     }

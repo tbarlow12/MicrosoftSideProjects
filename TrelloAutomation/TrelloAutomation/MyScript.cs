@@ -12,12 +12,14 @@ namespace TrelloAutomation
 {
     class MyScript
     {
+        static string PERSONAL_BOARD = "566c9eb231c1dc186fe938fe";
+
         static void MoveTodaysCards(Board board)
         {
             var lists = board.Lists;
             var today = DateTime.Now.DayOfWeek;
-            var sourceList = lists.ListByName(today.ToString());
-            var destList = lists.ListByName("Today");
+            var sourceList = lists.ByName(today.ToString());
+            var destList = lists.ByName("Today");
             sourceList.MoveAllCards(destList);
         }
         
@@ -25,24 +27,47 @@ namespace TrelloAutomation
         static void Main(string[] args)
         {
             TrelloOps.Initialize();
-            var board = new Board("566c9eb231c1dc186fe938fe");
+            var personal = new Board(PERSONAL_BOARD);
 
-            LabelUnfinishedCards(board);
+            //LabelUnfinishedCards(personal);
 
-            MoveTodaysCards(board);
-
-
+            RemoveLabelFromList(personal, personal.Lists.ByName("Today"), "Unfinished");
+            ArchiveCompletedCards(personal);
+            MoveTodaysCards(personal);
             TrelloProcessor.Flush();
+        }
 
-            Console.ReadLine();
+        private static void ArchiveCompletedCards(Board board)
+        {
+            var completed = board.Lists.ByName("Completed");
+            foreach(Card c in completed.Cards)
+            {
+                c.IsArchived = true;
+            }
         }
 
         private static void LabelUnfinishedCards(Board board)
         {
-            List today = board.Lists.ListByName("Today");
+            List today = board.Lists.ByName("Today");
+            Label unfinished = board.Labels.ByName("Unfinished");
             foreach(Card c in today.Cards)
             {
-                //c.Labels.Add()
+                if (!c.HasLabel("Unfinished"))
+                {
+                    c.Labels.Add(unfinished);
+                }
+            }
+        }
+
+        private static void RemoveLabelFromList(Board board, List list, string labelName)
+        {
+            foreach(Card c in list.Cards)
+            {
+                if (c.HasLabel(labelName))
+                {
+                    var label = c.Labels.ByName(labelName);
+                    c.Labels.Remove(label);
+                }
             }
         }
     }
