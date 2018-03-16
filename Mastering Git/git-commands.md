@@ -6,6 +6,7 @@
 - git rm <filename>
     - deletes files from **both** the working area and the repository
 - git rm --cached <filename>
+    - **opposite of add**
     - removes file from index, but keeps it in working area
 - git commit
     - sends files from index to repository
