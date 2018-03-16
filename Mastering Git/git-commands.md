@@ -1,0 +1,13 @@
+- git checkout <branch>
+    - moves HEAD to different branch
+    - working area and index are updated as well
+- git add <filename>
+    - sends files from working area to index
+- git rm <filename>
+    - deletes files from **both** the working area and the repository
+- git rm --cached <filename>
+    - removes file from index, but keeps it in working area
+- git commit
+    - sends files from index to repository
+- 
+
