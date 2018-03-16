@@ -13,6 +13,30 @@ namespace TrelloAutomation
     class MyScript
     {
         static string PERSONAL_BOARD = "566c9eb231c1dc186fe938fe";
+        static string WORK_BOARD = "5a54e29e078ed25a85b6a7ec";
+
+        
+
+        static void Main(string[] args)
+        {
+            RunScript(PERSONAL_BOARD);
+            RunScript(WORK_BOARD);            
+        }
+
+        static void RunScript(string board_id)
+        {
+            TrelloOps.Initialize();
+            var board = new Board(board_id);
+            if(DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+            {
+                board.Lists.ByName("Next Week").MoveAllCards(board.Lists.ByName("This Week"));
+            }
+            //LabelUnfinishedCards(board);
+            ArchiveCompletedCards(board);
+            MoveTodaysCards(board);
+            TrelloProcessor.Flush();
+        }
+
 
         static void MoveTodaysCards(Board board)
         {
@@ -20,21 +44,8 @@ namespace TrelloAutomation
             var today = DateTime.Now.DayOfWeek;
             var sourceList = lists.ByName(today.ToString());
             var destList = lists.ByName("Today");
-            sourceList.MoveAllCards(destList);
-        }
-        
-
-        static void Main(string[] args)
-        {
-            TrelloOps.Initialize();
-            var personal = new Board(PERSONAL_BOARD);
-
-            //LabelUnfinishedCards(personal);
-
-            RemoveLabelFromList(personal, personal.Lists.ByName("Today"), "Unfinished");
-            ArchiveCompletedCards(personal);
-            MoveTodaysCards(personal);
-            TrelloProcessor.Flush();
+            if(sourceList != null)
+                sourceList.MoveAllCards(destList);
         }
 
         private static void ArchiveCompletedCards(Board board)

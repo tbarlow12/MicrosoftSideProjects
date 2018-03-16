@@ -26,9 +26,7 @@ namespace TrelloAutomation
             }
             if (position == null)
             {
-                position = list.Cards.Count();
-                if (position == 0)
-                    position = 1;
+                position = 1;
             }
             card.Position = position;
         }
@@ -94,7 +92,7 @@ namespace TrelloAutomation
             TrelloConfiguration.JsonFactory = new ManateeFactory();
             TrelloConfiguration.RestClientProvider = new WebApiClientProvider();
             XmlDocument doc = new XmlDocument();
-            doc.Load(@"../../secrets.xml");
+            doc.Load(@"secrets.xml");
             TrelloAuthorization.Default.AppKey = doc.LastChild.FirstChild.InnerText;
             TrelloAuthorization.Default.UserToken = doc.LastChild.LastChild.InnerText;
         }
