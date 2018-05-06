@@ -12,10 +12,8 @@ namespace TrelloAutomation
 {
     class MyScript
     {
-        static string PERSONAL_BOARD = "566c9eb231c1dc186fe938fe";
-        static string WORK_BOARD = "5a54e29e078ed25a85b6a7ec";
-
-        
+        static string PERSONAL_BOARD = Environment.GetEnvironmentVariable("Personal");
+        static string WORK_BOARD = Environment.GetEnvironmentVariable("Work")
 
         static void Main(string[] args)
         {
